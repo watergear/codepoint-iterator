@@ -39,7 +39,7 @@ std::ptrdiff_t CodepointIterator::operator-(
 	return this->iterator_ - src;
 }
 
-char32_t CodepointIterator::operator*() {
+char32_t CodepointIterator::operator*() const {
 	const std::uint8_t currByte(
 		static_cast<std::uint8_t>(*(this->iterator_))
 	);
@@ -93,6 +93,27 @@ char32_t CodepointIterator::operator*() {
 	}
 
 	return codePoint;
+}
+
+CodepointIterator::operator std::string() const {
+	const std::uint8_t currByte(
+		static_cast<std::uint8_t>(*(this->iterator_))
+	);
+	std::string::difference_type offset(1);
+
+	if ( match(currByte, dtl::CodeUnitType::CONTINUATION) ) {
+		if ( match(currByte, dtl::CodeUnitType::THREE) ) {
+			if ( match(currByte, dtl::CodeUnitType::FOUR) ) {
+				offset = 4;
+			} else {
+				offset = 3;
+			}
+		} else {
+			offset = 2;
+		}
+	}
+
+	return std::string(this->iterator_, this->iterator_ + offset);
 }
 
 CodepointIterator& CodepointIterator::operator++() {

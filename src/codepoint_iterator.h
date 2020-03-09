@@ -29,7 +29,8 @@ class CodepointIterator : public std::iterator<std::bidirectional_iterator_tag,
 
 		std::ptrdiff_t operator-(const std::string::const_iterator&) const;
 
-		char32_t operator*();
+		char32_t operator*() const;
+		operator std::string() const;
 
 		CodepointIterator& operator++();
 		CodepointIterator& operator--();

@@ -84,6 +84,18 @@ TEST_F(CodepointIteratorTest, Dereferencing) {
 	}
 }
 
+TEST_F(CodepointIteratorTest, UTF8Dereferencing) {
+	for ( auto&& tmp : this->sample_ ) {
+		std::string text;
+		for ( UTF8::CodepointIterator iter(tmp.text.cbegin());
+			  iter != tmp.text.cend();
+			  ++iter ) {
+			text += std::string(iter);
+		}
+		EXPECT_EQ(tmp.text, text);
+	}
+}
+
 int main(int argc, char **argv) {
 	testing::InitGoogleTest(&argc, argv);
 
