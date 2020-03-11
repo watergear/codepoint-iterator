@@ -45,47 +45,47 @@ char32_t CodepointIterator::operator*() const {
 	);
 	char32_t codePoint{};
 
-	if ( match(currByte, dtl::CodeUnitType::CONTINUATION) ) {
-		if ( match(currByte, dtl::CodeUnitType::THREE) ) {
-			if ( match(currByte, dtl::CodeUnitType::FOUR) ) {
+	if ( match(currByte, dtl::CodeUnitType::NON_ASCII) ) {
+		if ( match(currByte, dtl::CodeUnitType::HEAD_THREE) ) {
+			if ( match(currByte, dtl::CodeUnitType::HEAD_FOUR) ) {
 				dtl::write(codePoint,
 				           currByte,
-				           dtl::CodePoint::FOUR,
+				           dtl::CodePoint::HEAD_FOUR,
 				           18);
 				dtl::write(codePoint,
 				           *(this->iterator_ + 1),
-				           dtl::CodePoint::CONTINUATION,
+				           dtl::CodePoint::BODY,
 				           12);
 				dtl::write(codePoint,
 				           *(this->iterator_ + 2),
-				           dtl::CodePoint::CONTINUATION,
+				           dtl::CodePoint::BODY,
 				           6);
 				dtl::write(codePoint,
 				           *(this->iterator_ + 3),
-				           dtl::CodePoint::CONTINUATION,
+				           dtl::CodePoint::BODY,
 				           0);
 			} else {
 				dtl::write(codePoint,
 				           currByte,
-				           dtl::CodePoint::THREE,
+				           dtl::CodePoint::HEAD_THREE,
 				           12);
 				dtl::write(codePoint,
 				           *(this->iterator_ + 1),
-				           dtl::CodePoint::CONTINUATION,
+				           dtl::CodePoint::BODY,
 				           6);
 				dtl::write(codePoint,
 				           *(this->iterator_ + 2),
-				           dtl::CodePoint::CONTINUATION,
+				           dtl::CodePoint::BODY,
 				           0);
 			}
 		} else {
 			dtl::write(codePoint,
 			           currByte,
-			           dtl::CodePoint::TWO,
+			           dtl::CodePoint::HEAD_TWO,
 			           6);
 			dtl::write(codePoint,
 			           *(this->iterator_ + 1),
-			           dtl::CodePoint::CONTINUATION,
+			           dtl::CodePoint::BODY,
 			           0);
 		}
 	} else {
@@ -101,9 +101,9 @@ CodepointIterator::operator std::string() const {
 	);
 	std::string::difference_type offset(1);
 
-	if ( match(currByte, dtl::CodeUnitType::CONTINUATION) ) {
-		if ( match(currByte, dtl::CodeUnitType::THREE) ) {
-			if ( match(currByte, dtl::CodeUnitType::FOUR) ) {
+	if ( match(currByte, dtl::CodeUnitType::NON_ASCII) ) {
+		if ( match(currByte, dtl::CodeUnitType::HEAD_THREE) ) {
+			if ( match(currByte, dtl::CodeUnitType::HEAD_FOUR) ) {
 				offset = 4;
 			} else {
 				offset = 3;
@@ -122,9 +122,9 @@ CodepointIterator& CodepointIterator::operator++() {
 	);
 	std::string::difference_type offset(1);
 
-	if ( match(currByte, dtl::CodeUnitType::CONTINUATION) ) {
-		if ( match(currByte, dtl::CodeUnitType::THREE) ) {
-			if ( match(currByte, dtl::CodeUnitType::FOUR) ) {
+	if ( match(currByte, dtl::CodeUnitType::NON_ASCII) ) {
+		if ( match(currByte, dtl::CodeUnitType::HEAD_THREE) ) {
+			if ( match(currByte, dtl::CodeUnitType::HEAD_FOUR) ) {
 				offset = 4;
 			} else {
 				offset = 3;
@@ -142,16 +142,16 @@ CodepointIterator& CodepointIterator::operator++() {
 CodepointIterator& CodepointIterator::operator--() {
 	this->iterator_.operator--();
 
-	if ( match(*(this->iterator_), dtl::CodeUnitType::CONTINUATION) ) {
+	if ( match(*(this->iterator_), dtl::CodeUnitType::NON_ASCII) ) {
 		this->iterator_.operator--();
 
-		if ( !match(*(this->iterator_), dtl::CodeUnitType::LEADING) ) {
+		if ( !match(*(this->iterator_), dtl::CodeUnitType::HEAD) ) {
 			this->iterator_.operator--();
 
-			if ( !match(*(this->iterator_), dtl::CodeUnitType::LEADING) ) {
+			if ( !match(*(this->iterator_), dtl::CodeUnitType::HEAD) ) {
 				this->iterator_.operator--();
 
-				if ( !match(*(this->iterator_), dtl::CodeUnitType::LEADING) ) {
+				if ( !match(*(this->iterator_), dtl::CodeUnitType::HEAD) ) {
 					throw codepoint_invalid();
 				}
 			}
